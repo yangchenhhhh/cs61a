@@ -1,6 +1,6 @@
 from operator import add, sub
 
-def A_plus_abs_b(a, b):
+def a_plus_abs_B(a, b):
     """Return a+abs(b), but without calling abs.
 
     >>> a_plus_abs_b(2, 3)
