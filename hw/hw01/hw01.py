@@ -128,6 +128,7 @@ def hailstone(x):
     """
     "*** YOUR CODE HERE ***"
     step =1
+    
     while x != 1:
         print(int(x))
         if x % 2 == 0:
@@ -135,4 +136,6 @@ def hailstone(x):
         else:
             x = x * 3 + 1
         step += 1
+    print(1)
+    
     return step
