@@ -1,3 +1,6 @@
+#from turtle import Turtle
+
+
 def falling(n, k):
     """Compute the falling factorial of n to depth k.
 
@@ -11,6 +14,10 @@ def falling(n, k):
     1
     """
     "*** YOUR CODE HERE ***"
+    result = 1
+    for i in range(n-k+1,n+1):
+        result = result*i
+    return result
 
 
 
@@ -28,6 +35,12 @@ def sum_digits(y):
     6
     """
     "*** YOUR CODE HERE ***"
+    str1 = str(y)
+    sum = 0
+    for i in str1:
+        sum = sum + int(i)
+    return sum
+
 
 
 
@@ -47,5 +60,12 @@ def double_eights(n):
     False
     """
     "*** YOUR CODE HERE ***"
-
-
+    flag = 0
+    str1 = (str(n))
+    for i in range(len(str1)-1):
+        if str1[i:i+2] == '88':
+            flag = flag + 1
+    if flag >= 1:
+        return True
+    else:
+        return False
