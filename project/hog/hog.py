@@ -123,13 +123,39 @@ def play(strategy0, strategy1, score0=0, score1=0, dice=six_sided,
     who = 0  # Who is about to take a turn, 0 (first) or 1 (second)
     # BEGIN PROBLEM 5
     "*** YOUR CODE HERE ***"
+    last_turn_score0, last_turn_score1 = 0 , 0
+    turn = 0
+    while score0 < goal and score1 < goal:
+        if who == 0:
+            num_rolls = strategy0(score0,score1)
+            this_turn_score = take_turn(num_rolls,score1,dice)
+            score0 = score0 + this_turn_score
+            if feral_hogs and abs(last_turn_score0 - num_rolls) == 2:
+                score0 += 3
+            if is_swap(score0,score1):
+                score0 , score1 = score1 , score0
+            last_turn_score0 = this_turn_score
+        else:
+            num_rolls = strategy1(score1,score0)
+            this_turn_score = take_turn(num_rolls,score0,dice)
+            score1 = score1 + this_turn_score
+            if feral_hogs and abs(last_turn_score1 - num_rolls) == 2:
+                score1 += 3
+            if is_swap(score1, score0):
+                score1 , score0 = score0 , score1
+            last_turn_score1 = this_turn_score
+        who = other(who)
     # END PROBLEM 5
     # (note that the indentation for the problem 6 prompt (***YOUR CODE HERE***) might be misleading)
     # BEGIN PROBLEM 6
-    "*** YOUR CODE HERE ***"
+        "*** YOUR CODE HERE ***"
+        if turn == 0:
+            comment = say(score0,score1)
+        else:
+            comment = comment(score0,score1)
+        turn += 1
     # END PROBLEM 6
     return score0, score1
-
 
 #######################
 # Phase 2: Commentary #
@@ -213,6 +239,15 @@ def announce_highest(who, last_score=0, running_high=0):
     assert who == 0 or who == 1, 'The who argument should indicate a player.'
     # BEGIN PROBLEM 7
     "*** YOUR CODE HERE ***"
+    def say(*scores):
+        assert len(scores) == 2
+        gain = scores[who] - last_score
+        if gain > running_high:
+            print(gain, "point(s)! That's the biggest gain yet for Player", who)
+            return announce_highest(who,scores[who],gain)
+        else:
+            return announce_highest(who,scores[who],running_high)        
+    return say
     # END PROBLEM 7
 
 
@@ -252,6 +287,17 @@ def make_averaged(original_function, trials_count=1000):
     """
     # BEGIN PROBLEM 8
     "*** YOUR CODE HERE ***"
+    def new_func(*args):
+        #run original function some number of times
+        #return average of function calls
+        res = 0
+        i=0
+        while i < trials_count:
+            res += original_function(*args)
+            i += 1
+        average = res/trials_count
+        return average
+    return new_func
     # END PROBLEM 8
 
 
@@ -266,6 +312,10 @@ def max_scoring_num_rolls(dice=six_sided, trials_count=1000):
     """
     # BEGIN PROBLEM 9
     "*** YOUR CODE HERE ***"
+    averaged_dice = make_averaged(roll_dice, trials_count)
+    scores = [averaged_dice(i+1, dice) for i in range(10)]
+    num_rolls = scores.index(max(scores)) + 1
+    return num_rolls
     # END PROBLEM 9
 
 
@@ -315,7 +365,11 @@ def bacon_strategy(score, opponent_score, cutoff=8, num_rolls=6):
     rolls NUM_ROLLS otherwise.
     """
     # BEGIN PROBLEM 10
-    return 6  # Replace this statement
+    f_b = free_bacon(opponent_score)
+    if f_b >= cutoff:
+        return 0
+    else:
+        return num_rolls
     # END PROBLEM 10
 
 
@@ -325,7 +379,17 @@ def swap_strategy(score, opponent_score, cutoff=8, num_rolls=6):
     non-beneficial swap. Otherwise, it rolls NUM_ROLLS.
     """
     # BEGIN PROBLEM 11
-    return 6  # Replace this statement
+    f_b = free_bacon(opponent_score)
+    if is_swap(score+f_b , opponent_score):
+        if opponent_score <= score + f_b:
+            return num_rolls
+        else:
+            return 0
+    else:
+        if f_b >= cutoff:
+            return 0
+        else:
+            return  num_rolls
     # END PROBLEM 11
 
 
